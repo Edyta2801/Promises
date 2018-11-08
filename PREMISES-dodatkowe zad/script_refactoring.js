@@ -1,34 +1,23 @@
-//wpisać w konsoli const app=new App()
-//app.renderView('listView')
-
-
-
-
 class App {
     constructor() {
         this.listView = new ListView()
         this.userView = new UserView()
         this.notFoundView = new NotFoundView()
+
         this.init()
     }
+
     init() {
         this.renderView('listView')
     }
+
     renderView(viewName, params) {
-        switch (viewName) {
-            case 'listView':
-                this.listView.render()
-                    .then(viewContent => this.render(viewContent))
-                break;
-            case 'userView':
-                this.userView.render(params.uid)
-                    .then(viewContent => this.render(viewContent))
-                    .catch(() => this.render(this.notFoundView.render()))
-                break;
-            case 'notFoundView':
-                this.render(this.notFoundView.render())
-                break;
-        }
+        params = params || {}
+        params = Object.assign(params, { renderView: this.renderView.bind(this) })
+
+        this[viewName].render(params)
+            .then(viewContent => this.render(viewContent))
+            .catch(() => this.render(this.notFoundView.render()))
     }
 
     render(viewContent) {
@@ -38,7 +27,7 @@ class App {
 }
 
 class ListView {
-    render() {
+    render(params) {
         const promise = fetch('./data/users.json')
             .then(response => response.json())
             .then(data => {
@@ -47,6 +36,10 @@ class ListView {
                 data.forEach(user => {
                     const userDiv = document.createElement('div')
                     userDiv.innerText = `${user.name} ${user.lastname}`
+                    userDiv.addEventListener(
+                        'click',
+                        () => params.renderView('userView', { uid: user.uid })
+                    )
                     div.appendChild(userDiv)
                 })
 
@@ -58,12 +51,17 @@ class ListView {
 }
 
 class UserView {
-    render(uid) {
-        const promise = fetch(`./data/users/${uid}.json`)
+    render(params) {
+        const promise = fetch(`./data/users/${params.uid}.json`)
             .then(response => response.json())
             .then(data => {
                 const div = document.createElement('div')
-                div.innerText = data.email
+                const img = document.createElement('img')
+                const textDiv = document.createElement('div')
+                img.setAttribute('src', data.avatar)
+                textDiv.innerText = data.email
+                div.appendChild(img)
+                div.appendChild(textDiv)
                 return div
             })
 
@@ -75,10 +73,8 @@ class NotFoundView {
     render() {
         const div = document.createElement('div')
         div.innerText = 'NotFoundView'
-        return div
+        return Promise.resolve(div)
     }
 }
 
 const app = new App()
-app.renderView('userView', { uid: '333' })
-app.renderView('userView',{uid:'1234'})
