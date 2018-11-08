@@ -7,18 +7,18 @@ class UserList {
         this.init()
     }
 
-    init() {
+    init(){
         this.render()
         this.fetchUsers()
     }
 
-    fetchUsers() {
+    fetchUsers(){
         fetch('https://randomuser.me/api/?results=' + this.numberOfUsers)
             .then(response => response.json())
             .then(this.setUsers.bind(this))
     }
 
-    setUsers(data) {
+    setUsers(data){
         this.users = data.results
         this.render()
     }
@@ -45,11 +45,11 @@ class UserList {
         this.container.appendChild(ul)
     }
 
-    onUserClickHandler(user) {
+    onUserClickHandler(user){
         alert(user.email)
     }
 
-    onUserDeleteClickHandler(e, userIndex) {
+    onUserDeleteClickHandler(e, userIndex){
         e.stopPropagation()
         this.users = this.users.slice(0, userIndex).concat(this.users.slice(userIndex + 1))
         this.render()
