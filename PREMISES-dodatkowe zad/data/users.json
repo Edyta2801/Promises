@@ -1,0 +1,17 @@
+[
+    {
+        "uid": "1234",
+        "name": "Mateusz",
+        "lastname": "Choma"
+    },
+    {
+        "uid": "12345",
+        "name": "Edyta",
+        "lastname": "Szarowska"
+    },
+    {
+        "uid": "12346",
+        "name": "Alicja",
+        "lastname": "Szarowska"
+    }
+]
